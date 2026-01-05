@@ -12,7 +12,7 @@ import weather.weathertelegrambot.service.TelegramBot;
 
 @Configuration
 @Data
-@PropertySource("application.properties")
+@PropertySource("classpath:application.properties")
 public class BotConfig {
     @Value("${bot.name}")
     String botName;

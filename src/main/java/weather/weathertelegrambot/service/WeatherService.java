@@ -12,6 +12,7 @@ public class WeatherService {
 
     private final static String URL
             = "https://api.openweathermap.org/data/2.5/weather?q={city}&appid={token}&units=metric&lang=ru";
+    private final static double PRESSURE_MM = 0.750062;
 
     public String getWeather(String city) {
         RestTemplate restTemplate = new RestTemplate();
@@ -31,7 +32,7 @@ public class WeatherService {
             String description = json.getJSONArray("weather").getJSONObject(0).getString("description");
             String cityName = json.getString("name");
 
-            double pressureMm = pressureHpa * 0.750062;
+            double pressureMm = pressureHpa * PRESSURE_MM;
 
             return String.format(
                     "🌍 Погода в г. %s\n" +

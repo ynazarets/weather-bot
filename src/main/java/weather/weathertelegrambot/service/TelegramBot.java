@@ -10,10 +10,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    final BotConfig botConfig;
+    private final BotConfig botConfig;
+    private final WeatherService weatherService;
 
-    public TelegramBot(BotConfig botConfig) {
+    public TelegramBot(BotConfig botConfig, WeatherService weatherService) {
         this.botConfig = botConfig;
+        this.weatherService = weatherService;
         System.out.println("БОТ УСПЕШНО ИНИЦИАЛИЗИРОВАН В SPRING!");
     }
 
@@ -32,7 +34,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
-            sendMessage(chatId, "Ты написал: " + messageText);
+            if (messageText.startsWith("/start")) {
+                sendMessage(chatId, "Привет. Напиши название города"
+                        + " и я пришлю погоду");
+            } else {
+                String weather = weatherService.getWeather(messageText);
+                sendMessage(chatId, weather);
+            }
         }
     }
 

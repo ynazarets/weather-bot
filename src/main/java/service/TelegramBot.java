@@ -1,0 +1,46 @@
+package service;
+
+import config.BotConfig;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+public class TelegramBot extends TelegramLongPollingBot {
+
+    final BotConfig botConfig;
+
+    public TelegramBot(BotConfig botConfig) {
+        this.botConfig = botConfig;
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botConfig.getBotName();
+    }
+
+    @Override
+    public String getBotToken() {
+        return botConfig.getToken();
+    }
+
+    @Override
+    public void onUpdateReceived(Update update) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String messageText = update.getMessage().getText();
+            Long chatId = update.getMessage().getChatId();
+            sendMessage(chatId, "Ты написал: " + messageText);
+        }
+    }
+
+    private void sendMessage(Long chatId, String textToSend) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(textToSend);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+}
